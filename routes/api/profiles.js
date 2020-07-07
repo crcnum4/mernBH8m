@@ -32,9 +32,8 @@ router.post(
     }
     try {
       const {
-        fName,
-        lName,
-        name,
+        firstName,
+        lastName,
         city,
         state,
         githubUrl,
@@ -45,10 +44,12 @@ router.post(
 
       // Build profile object
       const profileFields = {
-        fName,
-        lName,
-        name,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        // name: `${firstName.trim()} ${lastName.trim()}`,
+        // initials: `${firstName[0]}${lastName[0]}`
       };
+      profileFields.name = `${profileFields.firstName} ${profileFields.lastName}`;
       profileFields.user = userId;
       if (bio) profileFields.bio = bio;
       if (city) profileFields.city = city;
