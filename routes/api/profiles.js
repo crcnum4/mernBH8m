@@ -87,11 +87,11 @@ router.post(
   }
 );
 
-// @route		GET api/
+// @route		GET api/profiles/self
 // @desc		Get logged in users profile
 // @access	Private
 
-// @route		Get api/
+// @route		GET api/profiles
 // @desc		get all profiles - hacker 1.0 do not send down city and state 2.0 do not include logged in user in results - 1.0 projection 2.0 queries
 // @access	Private
 

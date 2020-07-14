@@ -30,7 +30,7 @@ const postSchema = new Schema(
       required: true,
     },
     deleted: { type: Boolean, default: false },
-    author: String,
+    author: { type: String, required: true },
     skillLevel: {
       type: String,
       enum: [
@@ -42,6 +42,7 @@ const postSchema = new Schema(
         "Senior",
         "Lead",
       ],
+      required: true,
     },
     cohort: String,
     title: {
@@ -50,10 +51,10 @@ const postSchema = new Schema(
     },
     categories: {
       type: [String],
-      default: [],
+      default: ["Other"],
     },
-    summary: String,
-    link: String,
+    summary: { type: String, required: true },
+    link: { type: String, required: true },
     resourceType: {
       type: String,
       enum: [
@@ -65,6 +66,7 @@ const postSchema = new Schema(
         "eBook",
         "PodCast",
       ],
+      required: true,
     },
     publishedAt: Date,
     videoLength: Number,
