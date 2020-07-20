@@ -7,6 +7,7 @@ const auth = require("../../middleware/auth");
 
 const Post = require("../../models/Post");
 const User = require("../../models/User");
+const Profile = require("../../models/Profile");
 
 // @route		GET api/posts/test
 // @desc		Test Route
@@ -36,19 +37,44 @@ router.post(
     ]),
     check("title", "Need title").notEmpty(),
     check("summary", "Need summary").notEmpty(),
+    check("link", "Need Link").notEmpty(),
+    check("link", "Valid URL required").isURL(),
+    check("resourceType", "Need resource type").notEmpty(),
+    check("resourceType", "Choose valid resource Type").isIn([
+      "Other",
+      "Article",
+      "Video",
+      "Slideshow",
+      "Book",
+      "eBook",
+      "PodCast",
+    ]),
+    check("publishedAt", "Date").optional().isISO8601(),
+    check("videoLength", "video length must be a number").optional().isInt(),
+    check("timeToComplete", "Must be a number").optional().isInt(),
   ],
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    return res.json(req.body);
+    try {
+      // store postData in variable
+      const postData = req.body;
+      // need to get profile matching the userID
+      const profile = await Profile.findOne({ user: req.user.id });
+      // add profileID to postData
+      postData.poster = profile.id;
+      // create the post in the database &
+      // respond with the post data.
+      return res.json(await Post.create(postData));
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json(error);
+    }
   }
 );
-// link -> string -> url
-// resourceType -> string -> enum
-// publishedAt -> date -> optional
-// videolength -> number -> optional
+
 // timeToComplete -> number -> optional
 
 // if valid - how do we know if the data is valid? express-validator

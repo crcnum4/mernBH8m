@@ -40,8 +40,6 @@ router.post(
       userData.password = await bcrypt.hash(userData.password, salt);
 
       const user = await User.create(userData);
-      const keys = Object.keys(user._doc);
-      console.log(keys);
       console.log(user);
       return res.json(user);
     } catch (error) {
