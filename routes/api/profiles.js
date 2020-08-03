@@ -95,4 +95,8 @@ router.post(
 // @desc		get all profiles - hacker 1.0 do not send down city and state 2.0 do not include logged in user in results - 1.0 projection 2.0 queries
 // @access	Private
 
+// @route		PUT api/profiles/
+// @desc    update logged in profile
+// @access  private
+
 module.exports = router;

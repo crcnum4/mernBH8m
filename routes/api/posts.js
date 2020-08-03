@@ -75,10 +75,118 @@ router.post(
   }
 );
 
-// timeToComplete -> number -> optional
+// @route		GET api/posts/
+// @desc		get all posts
+// @access	public
+router.get("/", async (req, res) => {
+  try {
+    // access DB with Post model to get all posts
+    const posts = await Post.find({ deleted: false }).populate(
+      "poster",
+      "avatar name firstName"
+    );
 
-// if valid - how do we know if the data is valid? express-validator
-// Post model -> post to the Post model
-// return the new Post
+    // send data back to requester
+    res.json(posts);
+  } catch (error) {
+    // if not, return error
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+
+// get one post by id
+
+// @route		GET api/posts/:postId
+// @desc		get a single post by the id
+// @access	public
+router.get("/:postId", async (req, res) => {
+  // get a single post and return it to the requester
+  try {
+    // access data base via post model to get a single post
+    const post = await Post.findById(req.params.postId).populate("poster", [
+      "name",
+      "avatar",
+      "firstName",
+    ]);
+    // handle errors
+    if (!post) {
+      return res.status(404).json({ message: "post not found" });
+    }
+    // send it back to requester if found
+    res.json(post);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+
+// @route		PUT api/posts/:postId
+// @desc		update an existing post
+// @access	owner
+router.put("/:postId", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    console.log(profile._id);
+    console.log(req.params.postId);
+
+    const post = await Post.findOneAndUpdate(
+      { _id: req.params.postId, poster: profile._id },
+      req.body,
+      { new: true }
+    );
+
+    console.log(post);
+
+    if (!post) {
+      const post = await Post.findById(req.params.postId);
+      if (!post) {
+        return res.status(404).json({ msg: "post not found" });
+      }
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    res.json(post);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(error);
+  }
+});
+/*
+router.put("/:postId", auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+
+    if (!post) {
+      return res.status(404).json({ msg: "Post not found" });
+    }
+    const profile = await Profile.findById(post.poster);
+
+    if (req.user.id !== profile.user) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    const postData = { ...post, ...req.body };
+
+    await post.update(postData);
+
+    return res.json(post);
+    /
+      const profile = await Profile.find({user: req.user.id});
+
+      if (profile._id !== post.poster)
+    /
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+});
+*/
+
+// epic: get and update an existing post
+// modify the data
+// comit the changes to the database
+// send the new data back to requester
 
 module.exports = router;
