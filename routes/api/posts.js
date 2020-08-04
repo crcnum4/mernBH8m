@@ -124,6 +124,7 @@ router.get("/:postId", async (req, res) => {
 // @route		PUT api/posts/:postId
 // @desc		update an existing post
 // @access	owner
+//-----Locking Method----//
 router.put("/:postId", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({ user: req.user.id });
@@ -153,6 +154,7 @@ router.put("/:postId", auth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
+//-----Non Locking Method----//
 /*
 router.put("/:postId", auth, async (req, res) => {
   try {
@@ -184,9 +186,56 @@ router.put("/:postId", auth, async (req, res) => {
 });
 */
 
-// epic: get and update an existing post
-// modify the data
-// comit the changes to the database
-// send the new data back to requester
+// @route		DELETE api/posts/:id
+// @desc		Delete the post by id
+// @access	owner
+//-----Locking Method----//
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    const result = await Post.findOneAndDelete({
+      _id: req.params.id,
+      poster: profile._id,
+    });
+
+    if (!result) {
+      //did not delete anything
+      const post = await Post.findById(req.params.id);
+      if (!post) {
+        return res.status(404).json({ msg: "Post not found" });
+      }
+      res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    return res.status(204).json({ msg: "Success!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json(error);
+  }
+});
+//-----Non Locking Method----//
+// router.delete('/:id', auth, async(req, res) => {
+//   try {
+//     const post = await Post.findById(req.params.id);
+//     if( !post ) {
+//       return res.status(404).json({ msg: "Post not found"})
+//     }
+//     //Check user
+//     const profile = await Profile.findById(post.poster);
+
+//     if( req.user.id !== profile.user) {
+//       return res.status(401).json({ msg: "Unauthorized"})
+//     }
+
+//    await post.remove();
+
+//    res.json({ msg: "Post Removed"});
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json(error)
+//    }
+// })
 
 module.exports = router;
