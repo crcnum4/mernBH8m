@@ -87,16 +87,79 @@ router.post(
   }
 );
 
-// @route		GET api/profiles/self
-// @desc		Get logged in users profile
-// @access	Private
+// @route    GET api/profiles/self
+// @desc     Get self profile
+// @access   Private
+router.get("/self", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOne({ user: req.user.id });
+    if (!profile) {
+      return res.status(404).json({ msg: "There is no profile for this user" });
+    }
+    res.json(profile);
+  } catch (error) {
+    console.error(err.message);
+    res.status(500).json({ msg: "Server Error", err });
+  }
+});
 
-// @route		GET api/profiles
-// @desc		get all profiles - hacker 1.0 do not send down city and state 2.0 do not include logged in user in results - 1.0 projection 2.0 queries
-// @access	Private
+// @route    GET api/profiles/:id
+// @desc     Get profile by id
+// @access   Public
+router.get("/:id", async (req, res) => {
+  try {
+    // const profile = await Profile.findOne({ user: req.params.id });
+    const profile = await Profile.findById(req.params.id);
+    if (!profile) {
+      return res.status(404).json({ msg: "There is no profile for this user" });
+    }
+    console.log(profile);
+    res.json(profile);
+  } catch (error) {
+    console.error(err.message);
+    res.status(500).json({ msg: "Server Error", err });
+  }
+});
+
+// @route    GET api/profiles
+// @desc     Get all profiles - 1. do not send city and state and 2. do not include logged in user in results
+// @access   Private
+router.get("/", auth, async (req, res) => {
+  try {
+    const profiles = await Profile.find(
+      { user: { $ne: req.user.id } },
+      { city: 0, state: 0, user: 0 }
+    );
+    if (!profiles) {
+      return res.status(400).json({ msg: "Cannot access profiles." });
+    }
+    console.log(profiles);
+    res.json(profiles);
+  } catch (error) {
+    console.error(err.message);
+    s;
+    res.status(500).send("Server Error");
+  }
+});
 
 // @route		PUT api/profiles/
-// @desc    update logged in profile
-// @access  private
+// @desc		update your profile
+// @access	Private
+router.put("/", auth, async (req, res) => {
+  try {
+    const profile = await Profile.findOneAndUpdate(
+      { user: req.user.id },
+      { $set: req.body },
+      { new: true }
+    );
+    if (!profile) {
+      return res.status(404).json({ message: "profile has not been created" });
+    }
+    res.json(profile);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json(error);
+  }
+});
 
 module.exports = router;
