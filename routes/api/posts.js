@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const commentsRouter = require("./comments");
 
 const { check, validationResult } = require("express-validator");
 
@@ -237,5 +238,37 @@ router.delete("/:id", auth, async (req, res) => {
 //     res.status(500).json(error)
 //    }
 // })
+
+// @route		PUT api/posts/:postId/like
+// @desc		add or remove a like from a post.
+// @access	private
+router.put("/:postID/like", auth, async (req, res) => {
+  let post;
+  try {
+    if (req.body.like === true) {
+      post = await Post.findByIdAndUpdate(
+        req.params.postID,
+        {
+          $addToSet: { likes: req.user.id },
+        },
+        { new: true }
+      );
+    } else if (req.body.like === false) {
+      post = await Post.findByIdAndUpdate(
+        req.params.postID,
+        {
+          $pull: { likes: req.user.id },
+        },
+        { new: true }
+      );
+    }
+    res.status(200).json({ likes: post.likes.length });
+  } catch (error) {
+    console.log("Error in /" + req.params.postID + "/like: " + error.message);
+    res.status(500).json(error);
+  }
+});
+
+router.use("/:postID/comments", commentsRouter);
 
 module.exports = router;

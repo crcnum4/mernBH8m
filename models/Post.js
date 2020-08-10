@@ -73,17 +73,21 @@ const postSchema = new Schema(
     timeToComplete: Number,
     comments: { type: [commentSchema], default: [] },
     // TODO rating - user 1 rating 1 to 5 rating. an array of json objects with user id and rating
-    rating: {
-      type: [
-        {
-          user: {
-            //Could also be profile
-            type: Schema.Types.ObjectId,
-            required: true,
-          },
-          rating: Number,
-        },
-      ],
+    // rating: {
+    //   type: [
+    //     {
+    //       user: {
+    //         //Could also be profile
+    //         type: Schema.Types.ObjectId,
+    //         required: true,
+    //       },
+    //       rating: Number,
+    //     },
+    //   ],
+    //   default: [],
+    // },
+    likes: {
+      type: [Schema.Types.ObjectId],
       default: [],
     },
     // TODO archive
