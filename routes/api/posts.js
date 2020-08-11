@@ -269,6 +269,6 @@ router.put("/:postID/like", auth, async (req, res) => {
   }
 });
 
-router.use("/:postID/comments", commentsRouter);
+router.use("/comments", commentsRouter);
 
 module.exports = router;
