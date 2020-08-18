@@ -15,7 +15,7 @@ const Profile = require("../../models/Profile");
 // @access	Public
 
 router.get("/test", (req, res) => {
-  res.json({ msg: "It worked!" });
+  res.json({ msg: "It works!" });
 });
 
 // @route		POST api/posts/

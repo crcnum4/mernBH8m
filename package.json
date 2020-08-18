@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js --ignore './client'",
+    "client": "npm start --prefix client",
+    "app": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
@@ -32,7 +34,7 @@
     "mongoose": "^5.9.16"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4",
-    "concurrently": "^5.2.0"
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.4"
   }
 }

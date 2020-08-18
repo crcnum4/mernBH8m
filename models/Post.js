@@ -13,7 +13,7 @@ const commentSchema = new Schema(
     // just like - twitter
     // upvoting 'likeing' or downvoting or 'dislike' -> youtube
     // feelings - like, dislike, interesting, hate, love, sorry, informative -> new facebook
-    // rank - stars 1 to 5 etc
+    // rank - stars 1 to 5
     likes: {
       type: [Schema.Types.ObjectId],
       default: [],
